@@ -1,0 +1,48 @@
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+mainClassName = "custom.printer.GroovyPrinter"
+version = '1.0'
+archivesBaseName = "printer"
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	// To use the Groovy library that ships with Gradle
+	// compile localGroovy()
+	
+	// To use a regular Groovy dependency
+    compile 'org.codehaus.groovy:groovy-all:2.3.6'
+	
+	// Add External libs here
+	compile 'commons-cli:commons-cli:1.2'
+	
+	// Add local GROOVY_HOME libs here
+	/*
+	def GROOVY_HOME = new File(System.getenv('GROOVY_HOME'))
+	if (!GROOVY_HOME.canRead()) {
+		println "Missing environment variable GROOVY_HOME: '${GROOVY_HOME}'" 
+	} else {
+		compile fileTree( dir: GROOVY_HOME.getAbsolutePath(), include: ['lib/commons*.jar'] )
+	}
+	*/
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
+// Use this task to generate the stand-alone excutable jar of groovy
+task uberjar( type: Jar, dependsOn: [':compileJava',':compileGroovy'] ) {
+	manifest {
+        attributes 'Main-Class': mainClassName
+    }
+	
+	// Our groovy classes
+	from files(sourceSets.main.output.classesDir)
+	// All groovy classes
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+}

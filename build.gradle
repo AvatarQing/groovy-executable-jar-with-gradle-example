@@ -31,18 +31,14 @@ dependencies {
 	*/
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
-}
-
 // Use this task to generate the stand-alone excutable jar of groovy
-task uberjar( type: Jar, dependsOn: [':compileJava',':compileGroovy'] ) {
+task uberjar(type: Jar, dependsOn: [':compileJava',':compileGroovy'] ) {
 	manifest {
         attributes 'Main-Class': mainClassName
     }
 	
 	// Our groovy classes
-	from files(sourceSets.main.output.classesDir)
+	from files(sourceSets.main.output.classesDirs)
 	// All groovy classes
     from configurations.runtime.asFileTree.files.collect { zipTree(it) }
 }
